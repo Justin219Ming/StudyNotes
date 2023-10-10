@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CMake.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="cmake">CMake</h1>
+<h3 id="%E8%AF%B4%E6%98%8E">说明</h3>
+<p>CMake能够输出各种各样的makefile或者project文件，能测试编译器所支持的C++特性。</p>
+<p><em>类似与makefile的功能，告诉操作系统我的库文件如何进行编译和链接，但CMake实际上是先 生成了一个makefile文件</em></p>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 115128.png" alt=""></p>
+<p><em>关于cmake的实际使用还需要再去查阅一下资料，以下内容仅仅用于学习cmake</em></p>
+<h3 id="%E8%AF%AD%E6%B3%95">语法</h3>
+<h4 id="%E6%B3%A8%E9%87%8A">注释</h4>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 115210.png" alt=""></p>
+<h2 id="cmakeliststxt">CMakeLists.txt</h2>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 115342.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 115449.png" alt=""></p>
+<p><strong>cmake 命令的参数必须是CMakeLists.txt 文件所在的路径</strong>，可以创建一个新文件夹用来放置编译出来的文件。</p>
+<h4 id="set">set</h4>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 120225.png" alt=""></p>
+<p><strong>使用set的取值，记得上面标红的格式， <code>${ }</code></strong></p>
+<h4 id="%E6%8C%87%E5%AE%9Ac%E6%A0%87%E5%87%86">指定C++标准</h4>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 120839.png" alt=""></p>
+<h4 id="%E6%8C%87%E5%AE%9A%E8%BE%93%E5%87%BA%E4%BD%8D%E7%BD%AE">指定输出位置</h4>
+<p><strong>最好使用绝对路径</strong>
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 121115.png" alt=""></p>
+<h3 id="%E6%90%9C%E7%B4%A2%E6%96%87%E4%BB%B6">搜索文件</h3>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 125609.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 125623.png" alt=""></p>
+<p><strong>实例</strong>
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 130359.png" alt=""></p>
+<p><strong>其中的<code>PROJECT_SOURCE_DIR</code> 和 <code>CMAKE_CURRENT_SOURCE_DIR</code>都是用来指代CMakeLists文件所在位置的路径</strong></p>
+<h3 id="%E6%8C%87%E5%AE%9A%E5%A4%B4%E6%96%87%E4%BB%B6%E7%9A%84%E8%B7%AF%E5%BE%84">指定头文件的路径</h3>
+<p><em>注意这里是指定头文件的目录的路径，而不是具体的某个头文件</em>
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 131055.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 131111.png" alt=""></p>
+<h3 id="%E5%88%B6%E4%BD%9C%E5%8A%A8%E6%80%81%E5%BA%93%E5%92%8C%E9%9D%99%E6%80%81%E5%BA%93">制作动态库和静态库</h3>
+<p><em>这个东西的作用在于你生成的库都是二进制文件，别人是没有办法知道你原代码是什么样子的，这样就相当于一次加密的行为</em></p>
+<p><em>库文件就是包含了你所写的函数还有头文件之类的东西</em></p>
+<h4 id="%E9%9D%99%E6%80%81%E5%BA%93">静态库</h4>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 133342.png" alt=""></p>
+<h4 id="%E5%8A%A8%E6%80%81%E5%BA%93">动态库</h4>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 133426.png" alt=""></p>
+<h4 id="%E6%8C%87%E5%AE%9A%E8%BE%93%E5%87%BA%E5%BA%93%E6%96%87%E4%BB%B6%E7%9A%84%E8%B7%AF%E5%BE%84">指定输出库文件的路径</h4>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 133538.png" alt=""></p>
+<p><em>和输出路径有关的这种东西，如果本身没有这个路径，cmake会自动创建这个路径</em></p>
+<h3 id="%E9%93%BE%E6%8E%A5%E9%9D%99%E6%80%81%E5%BA%93">链接静态库</h3>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 134855.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-24 134929.png" alt=""></p>
+<p>静态库和源文件都会被打包到应用程序中，动态库是在<strong>应用程序调用对应的函数</strong>了才开始加载到内存</p>
+<h3 id="%E9%93%BE%E6%8E%A5%E5%8A%A8%E6%80%81%E5%BA%93">链接动态库</h3>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 091805.png" alt=""></p>
+<p><em>public权限类似c++，private权限不同与c++，最后一个权限传递的信息最少</em></p>
+<p><em>动态库在进程需要<strong>调用其中的函数</strong>的时候会加载到进程的虚拟内存空间中，所以动态库可以同时被多个进程调用</em></p>
+<p><strong>动态库和静态库的区别</strong>
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 093043.png" alt=""></p>
+<p>动态库的链接通常写在生成执行程序的后面</p>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 093154.png" alt=""></p>
+<p><em>如果需要链接多个动态库，在相应的语法后面用空格隔开就可以</em></p>
+<h4 id="%E9%93%BE%E6%8E%A5%E8%87%AA%E5%B7%B1%E7%BC%96%E5%86%99%E7%9A%84%E5%8A%A8%E6%80%81%E5%BA%93%E9%9C%80%E8%A6%81%E8%A1%A8%E6%98%8E%E8%B7%AF%E5%BE%84%E6%89%80%E5%9C%A8">链接自己编写的动态库需要表明路径所在</h4>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 094242.png" alt=""></p>
+<h3 id="%E6%97%A5%E5%BF%97">日志</h3>
+<p><em>也就是一种调试的办法，类似于c中的printf 和 rust中的println,可以利用 <code>${}</code> 来打印变量的信息，但是这个不同的参数可以决定是否中断程序</em></p>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 094455.png" alt=""></p>
+<h3 id="%E5%8F%98%E9%87%8F%E6%93%8D%E4%BD%9C">变量操作</h3>
+<ul>
+<li>
+<p>set追加
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 102345.png" alt=""></p>
+</li>
+<li>
+<p>list追加</p>
+</li>
+</ul>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 102434.png" alt=""></p>
+<ul>
+<li>list移除</li>
+</ul>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 102659.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 102743.png" alt=""></p>
+<ul>
+<li>list的其他用法</li>
+</ul>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 103153.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 103232.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 103254.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 103313.png" alt=""></p>
+<h3 id="%E5%AE%8F">宏</h3>
+<p><em>利用宏的原因在于，在程序编写过程中会用到大量printf来进行打印测试，如果程序编写好了，再一条条删除非常麻烦，这时候宏的作用就体现出来了</em></p>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 103720.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 103915.png" alt=""></p>
+<h3 id="%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%AE%9A%E4%B9%89%E5%A5%BD%E7%9A%84%E5%AE%8F">系统自定义好的宏</h3>
+<p><img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 104107.png" alt=""></p>
+<p><strong>关于更加贴近现实的例子，也就是嵌套定义cmake，详情见</strong>
+https://subingwen.cn/cmake/CMake-advanced/</p>
+<p><strong>也可以参考b站视频</strong>
+https://www.bilibili.com/video/BV14s4y1g7Zj?p=17&amp;spm_id_from=pageDriver&amp;vd_source=6145f2ccf40a9f978a5b12b81fe169f0</p>
+<p>以下是截图
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115001.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115224.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115359.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115429.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115506.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115533.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115559.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115634.png" alt="">
+<img src="file:///d:/Code/BLOG/process/SQL数据库/截图文件夹/屏幕截图 2023-07-25 115657.png" alt=""></p>
+<p><strong>静态库可以链接静态库，也可以链接动态库</strong></p>
+
+</body>
+</html>
