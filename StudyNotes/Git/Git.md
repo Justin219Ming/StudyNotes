@@ -178,3 +178,30 @@ $ git remote rm origin
 ```
 
 此处的“删除”其实是解除了本地和远程的绑定关系，并不是物理上删除了远程库。远程库本身并没有任何改动。要真正删除远程库，需要登录到GitHub，在后台页面找到删除按钮再删除。
+
+### 小结
+
+要关联一个远程库，使用命令
+
+`git remote add origin git@server-name:path/repo-name.git`；
+
+关联一个远程库时必须给远程库指定一个名字，`origin`是默认习惯命名；
+
+关联后，使用命令`git push -u origin master`第一次推送master分支的所有内容；
+
+此后，每次本地提交后，只要有必要，就可以使用命令`git push origin master`推送最新修改；
+
+### 从远程库克隆
+
+在关联好远程库后
+
+可以通过
+
+> git clone git@github.com:your_name/your_repo_name.git
+
+来进行克隆操作
+
+Git支持多种协议，https，ssh等 但是ssh快
+
+## 分支管理
+
