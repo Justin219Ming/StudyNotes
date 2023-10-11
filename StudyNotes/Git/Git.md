@@ -54,6 +54,8 @@ Git是先把文件放在工作区 add 命令推送到暂存区
 
 查看文件的历史记录：`git log main.cpp`
 
+查看文件内容`cat file_name`
+
 查看不同版本之间的差别：git diff commit_id1 commit_id2 main.cpp
 
 
@@ -205,3 +207,70 @@ Git支持多种协议，https，ssh等 但是ssh快
 
 ## 分支管理
 
+- 查看分支: `git branch`
+- 创建分支: `git branch <name>`
+- 切换分支：`git switch <name>`
+- 创建并切换分支: `git checkout -b <name>`
+- 合并某分支到当前分支: `git merge <name>`
+- 留存分支版本的合并分支：`git merge --no--ff -m"你想要的信息" <name>`
+- 删除分支：`git branch -d <name>`
+
+### 解决冲突
+
+当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。
+
+解决冲突就是把Git合并失败的文件手动编辑为我们希望的内容，再提交。
+
+用`git log --graph`命令可以看到分支合并图。
+
+### 丢弃分支
+
+- 要丢弃一个没有被合并过的分支，可以通过`git branch -D <name>`强行删除。
+
+### 多人协作
+
+- 查看远程库信息，使用`git remote -v`；
+
+- 本地新建的分支如果不推送到远程，对其他人就是不可见的；
+
+- 从本地推送分支，使用`git push origin branch-name`，如果推送失败，先用`git pull`抓取远程的新提交；
+
+- 在本地创建和远程分支对应的分支，使用`git checkout -b branch-name origin/branch-name`，本地和远程分支的名称最好一致；
+
+- 从远程抓取分支，使用`git pull`，如果有冲突，要先处理冲突。
+
+- 如果`git pull`提示`no tracking information`，则说明本地分支和远程分支的链接关系没有创建，用命令`git branch --set-upstream-to <branch-name> origin/<branch-name>`
+
+- 完成后重新推送
+
+
+### Rebase
+
+- rebase操作可以把本地未push的分叉提交历史整理成直线；
+- rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。
+
+##　标签管理
+
+- 命令`git tag <tagname>`用于新建一个标签，默认为`HEAD`，也可以指定一个commit id；
+- 命令`git tag -a <tagname> -m "blablabla..."`可以指定标签信息；
+- 命令`git tag`可以查看所有标签。
+- 命令`git push origin <tagname>`可以推送一个本地标签；
+- 命令`git push origin --tags`可以推送全部未推送过的本地标签；
+- 命令`git tag -d <tagname>`可以删除一个本地标签；
+- 命令`git push origin :refs/tags/<tagname>`可以删除一个远程标签。
+
+### 使用Github
+
+- 在GitHub上，可以任意Fork开源仓库；
+- 自己拥有Fork后的仓库的读写权限；
+- 可以推送pull request给官方仓库来贡献代码。
+
+### 关联Gitee
+
+关联Gitee的远程库（注意路径中需要填写正确的用户名）：
+
+只是需要命名的时候不一样就行下面这个远程库命名为gitee
+
+```
+git remote add gitee git@gitee.com:name/name.git
+```
