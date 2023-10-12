@@ -279,6 +279,20 @@ Git支持多种协议，https，ssh等 但是ssh快
 git remote add gitee git@gitee.com:name/name.git
 ```
 
+## 三种工作流
+
+Gitflow
+
+Github flow
+
+Gitlab flow
+
+## 提交规范
+
+Conventional Commits
+
+
+
 ## 坑
 
 在推送 关联到远程仓库的时候 千万记住 那个仓库一定要是干净的 不能有什么readme文件
