@@ -416,7 +416,144 @@ func main(){
 
 ### 赋值运算符
 
+```go
+package main
 
+import "fmt"
+
+func main() {
+	var a, c int = 21, 0
+	c = a
+	fmt.Printf("=运算符实例，c值为 = %d\n", c)
+	c, a = 1, 20
+	c +=  a
+	fmt.Printf("+=运算符实例，c值为 = %d\n", c)
+	c, a = 1, 20
+	c -=  a
+	fmt.Printf("-=运算符实例，c值为 = %d\n", c)
+	c, a = 1, 20
+	c *=  a
+	fmt.Printf("*=运算符实例，c值为 = %d\n", c)
+	c, a = 1, 20
+	c /=  a
+	fmt.Printf("/=运算符实例，c值为 = %d\n", c)
+	c, a = 1, 20
+	c %=  a
+	fmt.Printf("求余运算符实例，c值为 = %d\n", c)
+	c = 200
+	c <<=  2
+	fmt.Printf("<<=运算符实例，c值为 = %d\n", c)
+	c = 200
+	c >>=  2
+	fmt.Printf(">>=运算符实例，c值为 = %d\n", c)
+	c = 200
+	c &=  2
+	fmt.Printf("&=运算符实例，c值为 = %d\n", c)
+	c = 200
+	c ^=  2
+	fmt.Printf("^=运算符实例，c值为 = %d\n", c)
+	c = 200
+	c |=  2
+	fmt.Printf("|=运算符实例，c值为 = %d\n", c)
+}
+```
+
+### 逻辑运算符
+
+与或非，只能对两个布尔类型进行判定 	&& 	||	 ！
+
+### 位运算符
+
+将数值自动转换为二进制进行计算。
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	var a = 60      // 60 = 0011 1100
+	var b = 13      // 13 = 0000 1101
+	var c = 0
+
+	c = a & b       // 12 = 0000 1100
+	fmt.Printf("c的十进制值为 %d\n", c )
+	fmt.Printf("c的二进制值为 %b\n", c )
+
+	c = a | b       // 61 = 0011 1101
+	fmt.Printf("c的十进制值为 %d\n", c )
+	fmt.Printf("c的二进制值为 %b\n", c )
+
+	c = a ^ b       // 49 = 0011 0001
+	fmt.Printf("c的十进制值为 %d\n", c )
+	fmt.Printf("c的二进制值为 %b\n", c )
+
+	c = a << 2     // 240 = 1111 0000
+	fmt.Printf("c的十进制值为 %d\n", c )
+	fmt.Printf("c的二进制值为 %b\n", c )
+
+	c = a >> 2     // 15 = 0000 1111
+	fmt.Printf("c的十进制值为 %d\n", c )
+	fmt.Printf("c的二进制值为 %b\n", c )
+}
+```
+
+### 指针和解引用
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var a = 4
+	var ptr *int
+	fmt.Printf("a变量的内存地址：%v\n", &a)
+	// 将变量a的内存地址赋给指针ptr
+	ptr = &a
+	fmt.Printf("指针ptr的内存地址为：%v\n", ptr)
+	fmt.Printf("指针ptr的值为：%v\n", *ptr)
+}
+```
+
+### 注释
+
+在go中采用和C 一样的注释方式 
+
+>  // 或者   /*    */
+
+## 数据类型
+
+### 浮点型
+
+在Go中不同数据类型进行运算，必须要强制转换数据类型，才可以正常开始运算
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	//fmt.Println(math.MaxFloat32)
+	//fmt.Println(math.MaxFloat64)
+
+	var f32 float32 = 1.1
+	var f64 float64 = 2.2
+	// 将float32的浮点数转为float64，再执行相加运算
+	r := float64(f32) + f64
+	fmt.Printf("运行结果为：%v\n", r)
+	// 将整型转为float32的浮点数，再执行相加运算
+	var i int = 10
+	rd := float32(i) + f32
+	fmt.Printf("运行结果为：%v\n", rd)
+
+	k := fmt.Sprintf("%.1f", r)
+	fmt.Printf("进度丢失处理结果为：%v", k)
+}
+```
 
 
 
