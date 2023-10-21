@@ -529,6 +529,8 @@ func main() {
 
 在Go中不同数据类型进行运算，必须要强制转换数据类型，才可以正常开始运算
 
+其中`fmt.Sprintf`是四舍五入的处理结果
+
 ```go
 package main
 
@@ -555,25 +557,715 @@ func main() {
 }
 ```
 
+### 复数的计算
+
+- complex128(64位实数和虚数)
+- complex64(32位)
+- compelx(x,y)是预声明标识符进行赋值
+- x，y分别是实部和虚部
+
+语法格式如下
+
+`var comp complex128 = complex(x,y)`
+
+类型转换用`complex128() complex64()`实现
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var comp1 complex128 = complex(1, 3)
+	var comp2 complex128 = complex(2, 4)
+	var comp3 complex64 = complex(3,6)
+	adds := comp1 + comp2
+	reduce := comp1 - comp2
+	mult := comp1 * comp2
+	// 不同的复数类型不能直接运算
+	// 将complex64转为complex128类型，再执行运算
+	div := complex128(comp3) / comp1
+	fmt.Printf("复数相加：%v\n", adds)
+	fmt.Printf("复数相减：%v\n", reduce)
+	fmt.Printf("复数相乘：%v\n", mult)
+	fmt.Printf("复数相除：%v\n", div)
+}
+```
+
+### 布尔型
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var n int = 10
+	// 关系运算符
+	r := n == 20
+	fmt.Printf("10是否等于20：%v\n", r)
+	// if语句
+	if n > 0 {
+		fmt.Printf("if的判断条件为true\n")
+	}
+	// for语句
+	for n > 0 {
+		fmt.Printf("for的判断条件为true\n")
+		break
+	}
+}
+```
+
+### 字符类型
+
+- uint8 ：代表ASCII码的一个字符 等于byte类型大小
+- rune： 代表UTF-8字符 等于int32类型大小
+
+字符的赋值必须使用单引号，且只有一个字符
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var a byte
+	var b rune
+	a = 'u'
+	b = 'a'
+	c := 'c'
+	// 格式化%T是输出变量的数据类型
+	fmt.Printf("变量a的数据类型为：%T\n", a)
+	fmt.Printf("变量b的数据类型为：%T\n", b)
+	fmt.Printf("变量c的数据类型为：%T", c)
+}
+```
+
+### 字符串操作
+
+字符串的格式化操作
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	// 输出字符a的ASCII
+	fmt.Printf("格式化符号v：%v\n", 'a')
+	// 输出整型的数据类型
+	fmt.Printf("格式化符号T：%T\n", 123)
+	// 输出带双引号的字符串
+	fmt.Printf("格式化符号q：%q\n", "Hello go")
+	// 输出的字符串
+	fmt.Printf("格式化符号s：%s\n", "Hello go")
+	// 输出保留小数点两位的浮点数，.2是小数点后保留位数
+	fmt.Printf("格式化符号f：%.2f\n", 123.321)
+	// 输出十进制的整型
+	fmt.Printf("格式化符号d：%d\n", 3121)
+	//// 输出十进制的整型
+	//fmt.Printf("格式化符号d：%d\n", 12.12)
+}
+```
+
+### 字符串拼接
+
+官方建议使用Builder
+
+```go
+package main
+
+import (
+	"bytes"
+	"fmt"
+	"strings"
+)
+
+func main() {
+	n := "hello world"
+	m := "I am Tom"
+	// 使用"+"拼接字符串
+	j := n + "," + m
+	fmt.Println(j)
+	// 使用fmt.Sprintf()拼接字符串
+	k := fmt.Sprintf("%s,%s", n, m)
+	fmt.Println(k)
+	// 使用strings.Join()拼接字符串
+	g := strings.Join([]string{n, m}, ",")
+	fmt.Println(g)
+	// 使用builder.WriteString()连接字符串
+	var builder strings.Builder
+	builder.WriteString(n)
+	builder.WriteString(",")
+	builder.WriteString(m)
+	fmt.Println(builder.String())
+	// 使用buffer.WriteString()连接字符串
+	var buffer bytes.Buffer
+	buffer.WriteString(n)
+	buffer.WriteString(",")
+	buffer.WriteString(m)
+	fmt.Println(buffer.String())
+}
+
+```
+
+### 获取字符串长度
+
+正常情况下，使用len()会因为UTF-8是3位字符而导致中文字符一个等于3个
+
+所以如果有多字节的字符 可以使用RunCountInString或者[]rune()实现
+
+```go
+package main
+
+import (
+	"fmt"
+	"unicode/utf8"
+)
+
+func main() {
+	n := "Hello,golang"
+	m := "你好,Go语言"
+	//fmt.Println("字符串n的长度：", len(n))
+	//fmt.Println("字符串m的长度：", len(m))
+	// 使用utf8.RuneCountInString()获取字符串长度
+	fmt.Println("utf8获取n的长度：", utf8.RuneCountInString(n))
+	fmt.Println("utf8获取m的长度：", utf8.RuneCountInString(m))
+	// 使用[]rune()获取字符串长度
+	fmt.Println("[]rune()获取n的长度：", len([]rune(n)))
+	fmt.Println("[]rune()获取m的长度：", len([]rune(m)))
+}
+
+```
+
+### 遍历字符串
+
+遍历中文字符串的时候，需要注意使用 range 或者 rune
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	
+
+	//n := "Hi,Go语言"
+	//m := []rune(n)
+	//for i:=0; i<len(m); i++{
+	//	// %c输出每个字符
+	//	// %d输出字符对应的十进制数
+	//	fmt.Printf("%c——%d\n", m[i], m[i])
+	//}
+
+
+	n := "Hi,Go语言"
+	for _, s := range n{
+		// %c输出每个字符
+		// %d输出字符对应的十进制数
+		fmt.Printf("%c——%d\n", s, s)
+	}
+
+}
+
+```
+
+### 字符串的位置与截取
+
+- index()第一个参数是被查找的主字符串，第二个参数是要查找的截断字符串
+- lastindex是第一次出现的字符的最后位置
+- 截取方式 [起始位置：终止位置]
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	n := "hello-world-world-你好呀"
+	// 获取字符串的子串world的最开始位置
+	m := strings.Index(n, "world")
+	fmt.Println("获取子串world的最开始位置：", m)
+	// 获取字符串的子串world在最末端的位置
+	l := strings.LastIndex(n, "world")
+	fmt.Println("获取world在最末端的位置：", l)
+	// 截取m往后的字符串
+	k := n[m:]
+	fmt.Println("截取m往后的字符串：", k)
+	// 截取m位置往后的3位字符串
+	p := n[m:m+3]
+	fmt.Println("截取m位置往后的3位字符串：", p)
+}
+
+```
+
+### 字符串分割
+
+> string.Split(s,sep)
+
+- s代表被分割的字符串
+- sep代表用什么分割
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	n := "hello@-world@-I@-am@-Tom"
+	// 对字符串的空格进行分割
+	m := strings.Split(n, "@-")
+	fmt.Printf("分割后的数据类型：%T\n", m)
+	for _, i:= range m{
+		// 输出分割后的每个字符串
+		fmt.Println(i)
+	}
+}
+
+```
+
+### 字符串替换
+
+> string.Replace(s,old,new,n)
+
+- s是被代替的字符串
+- old是要替代前的字符串
+- new是替代后的字符串
+- n是替换次数 -1是代表全部替换
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	s := "hello world I am Tom"
+	// 参数n代表替换的次数，从左边开始计算，-1代表替换全部
+	m := strings.Replace(s, " ", "-", -1)
+	fmt.Println(m)
+	// 参数n等于1代表只替换一次
+	k := strings.Replace(s, " ", "-", 1)
+	fmt.Println(k)
+}
+
+```
+
+### 转换数据类型
+
+整型与浮点型
+
+```go
+package main
+import "fmt"
+func main(){
+    n := 123
+    f := 234
+    m := int(f) + n
+    k := float64(n) + f
+    fmt.Printf("转整型再运算: %T:%v\n",m,m);
+    fmt.Printf("转浮点型再运算： %T:%v\n",k,k);
+}
+```
+
+### 整型与字符串
+
+> strconv,Itoa() 的参数传递整型数据，返回值是转换后的字符串
+>
+> strconv.Atoi()的参数传递字符串数据，返回值是整型
+>
+> i, err := strconv.ParseInt (s, base, bitSize)
+>
+> - s是需要被转换的字符串
+> - base是字符串的进制数
+> - bitSize是整型类型
+> - i是转换后的结果
+> - err 返回转换失败的异常信息 
+
+```GO
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func main() {
+	// 整型转换字符串
+	s := strconv.Itoa(100)
+	fmt.Printf("整型转换字符串：%T：%v\n", s, s)
+	// 字符串转换整型
+	i, _ := strconv.Atoi("110")
+	fmt.Printf("字符串转换整型：%T：%v", i, i)
+
+	// 字符串转换整型int8
+	k, _ :=strconv.ParseInt("120", 10, 8)
+	fmt.Printf("字符串转换整型int8：%T：%v\n", k, k)
+	// 字符串转换整型int16
+	l, _ :=strconv.ParseInt("120", 10, 16)
+	fmt.Printf("字符串转换整型int16：%T：%v\n", l, l)
+	// 字符串转换整型int32
+	m, _ :=strconv.ParseInt("120", 10, 32)
+	fmt.Printf("字符串转换整型int32：%T：%v\n", m, m)
+	// 字符串转换整型int64
+	n, _ :=strconv.ParseInt("120", 10, 64)
+	fmt.Printf("字符串转换整型int64：%T：%v", n, n)
+}
+
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func main() {
+	// 浮点型转换字符串
+	f := 100.12345678901234567890123456789
+	fmt.Println(strconv.FormatFloat(f, 'b', 5, 32))
+	fmt.Println(strconv.FormatFloat(f, 'b', 5, 32))
+	fmt.Println(strconv.FormatFloat(f, 'e', 5, 32))
+	fmt.Println(strconv.FormatFloat(f, 'E', 5, 32))
+	fmt.Println(strconv.FormatFloat(f, 'f', 5, 32))
+	fmt.Println(strconv.FormatFloat(f, 'g', 5, 32))
+	fmt.Println(strconv.FormatFloat(f, 'G', 5, 32))
+
+	// 字符串转换浮点型，类型为float32
+	s := "0.1234"
+	k, _ := strconv.ParseFloat(s, 32)
+	fmt.Printf("字符串转换浮点型，类型为float32：%T——%v\n", k, k)
+	// 字符串转换浮点型，类型为float64
+	l, _ := strconv.ParseFloat(s, 64)
+	fmt.Printf("字符串转换浮点型，类型为float64：%T——%v\n", l, l)
+}
+
+```
+
+以上是浮点数和字符串的转换
+
+主要涉及两个函数
+
+> strconv.FormatFloat()
+>
+> strconv.ParseFloat()
+
+ 具体细节需要用的时候自行查询 大部分转换方法都在内置包strconv中有定义
+
+## 流程控制
+
+### if
+
+if可以定义在if作用范围内的变量
+
+```go
+// 随机数
+	rand.Seed(time.Now().Unix())
+	// num := rand.Intn(100)从100中随机生成整数
+	if num := rand.Intn(100); num < 20 {
+		fmt.Printf("随机数为%v\n", num)
+	}else if num > 20{
+		fmt.Printf("随机数为%v\n", num)
+	}
+
+```
+
+### switch多条件分支
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	//// 使用方法1
+	//finger := 3
+	//switch finger {
+	//	// 当变量finger=1的时候
+	//	case 1:
+	//		fmt.Println("大拇指")
+	//	// 当变量finger=2的时候
+	//	case 2:
+	//		fmt.Println("食指")
+	//	// 当变量finger=3的时候
+	//	case 3:
+	//		fmt.Println("中指")
+	//	case 4:
+	//		fmt.Println("无名指")
+	//	case 5:
+	//		fmt.Println("小拇指")
+	//	default:
+	//		fmt.Println("无效的输入！")
+	//}
+	//
+	//// 使用方法2
+	//rand.Seed(time.Now().Unix())
+	//num := rand.Intn(100)
+	//switch {
+	//	// 判断num是否大于20
+	//	case num < 20:
+	//		fmt.Printf("变量num的值为：%v，小于20\n", num)
+	//	default:
+	//		fmt.Printf("变量num的值为：%v，大于20\n", num)
+	//}
+	//
+	//// 使用方法3
+	//rand.Seed(time.Now().Unix())
+	//switch n := rand.Intn(9); n {
+	//	// 变量n在（1, 3, 5, 7, 9）区间内
+	//	case 1, 3, 5, 7, 9:
+	//		fmt.Printf("奇数，值为：%v，小于20\n", n)
+	//	// 变量n在（2, 4, 6, 8）区间内
+	//	case 2, 4, 6, 8:
+	//		fmt.Printf("偶数，值为：%v，小于20\n", n)
+	//	default:
+	//		fmt.Printf("啥也不是")
+	//}
+	finger := 1
+	switch finger {
+	// 当变量finger=1的时候
+	case 1:
+		fmt.Println("大拇指")
+		fallthrough
+	// 当变量finger=2的时候
+	case 2:
+		fmt.Println("食指")
+		fallthrough
+	// 当变量finger=3的时候
+	case 3:
+		fmt.Println("中指")
+	case 4:
+		fmt.Println("无名指")
+	case 5:
+		fmt.Println("小拇指")
+	default:
+		fmt.Println("无效的输入！")
+	}
+}
+```
+
+如果你想要在执行了一条case之后继续运行下一个case 使用`fallthrough`
+
+`default`的作用是每一个case都不满足的时候执行
+
+### for
+
+GO只支持`for`语法不支持while 和 do while语法
+
+> for 变量初始值; 判断条件; 变量控制｛
+>
+> ​	执行语句
+>
+> ｝
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	// 组合方式一
+	for i := 1; i < 10; i++ {
+		fmt.Printf("本次循环：%v\n", i)
+	}
+	// 组合方式二
+	for i := 1; i < 10; {
+		fmt.Printf("本次循环：%v\n", i)
+		i++
+	}
+	// 组合方式三
+	var i int = 1
+	for i < 5 {
+		fmt.Printf("本次循环：%v\n", i)
+		i++
+	}
+	// 组合方式四
+	for {
+		fmt.Printf("本次循环：%v\n", i)
+		break
+	}
+}
+
+```
+
+有多种组合方式 
+
+### for-range获取键值
+
+ 
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	myStr := []string{"Jack", "Mark"}
+	// 使用for循环输出切片myStr的元素
+	for i := 0; i < len(myStr); i++ {
+		fmt.Printf("本次循环的次数为：%v\n", i)
+		fmt.Printf("切片myStr的元素为：%v\n", myStr[i])
+	}
+	// 使用for-range输出切片myStr的元素
+	for i, v := range myStr {
+		fmt.Printf("本次循环的次数为：%v\n", i)
+		fmt.Printf("切片myStr的元素为：%v\n", v)
+	}
+}
+
+```
+
+### break终止代码
+
+- 可以越级终止代码
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	// 在最外层循环中设置标签，标签名自行修改
+	for1:
+	for i := 0; i < 3; i++ {
+		for k := 1; k < 10; k++ {
+			fmt.Printf("%v:%v\n", i, k)
+			// break后加上标签名，直接终止最外层循环
+			break for1
+		}
+	}
+}
+
+
+```
+
+### continue
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	for i := 1; i < 5; i++ {
+		if i == 2 {
+			continue
+		}
+		fmt.Printf("本次循环次数为：%v\n", i)
+	}
+}
+
+```
+
+### goto 无条件跳转
+
+- 注意需要表明程序的名字
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	for i := 1; i < 5; i++ {
+		if i == 2 {
+			goto gofunc
+		}
+		fmt.Printf("本次循环次数为：%v\n", i)
+	}
+	gofunc:
+		fmt.Printf("使用goto跳转\n")
+	fmt.Printf("程序结束了")
+}
+
+```
 
 
 
+## 指针
 
+  GO中的指针有两种类型
 
+- 类型指针
+- 切片指针
 
+### 定义和空指针
 
+> var name *type
 
+- name 自行命名
+- type是数据类型
 
+```go
+package main
 
+import "fmt"
 
+func main() {
+	// 定义int类型的指针变
+	var pint *int
+	var a int = 10
+	pint = &a
+	fmt.Printf("指针值为：%v，空间地址：%v\n", pint, &pint)
+	// 定义float64类型的指针变量
+	var pfloat *float64
+	fmt.Printf("指针值为：%v，空间地址：%v\n", pfloat, &pfloat)
+	// 定义string类型的指针变量
+	var pstr *string
+	fmt.Printf("指针值为：%v，空间地址：%v\n", pstr, &pstr)
+	// 定义bool类型的指针变量
+	var pbool *bool
+	fmt.Printf("指针值为：%v，空间地址：%v\n", pbool, &pbool)
+	// 定义byte类型的指针变量
+	var pbyte *byte
+	fmt.Printf("指针值为：%v，空间地址：%v\n", pbyte, &pbyte)
 
+	ptr := new(int)
+	fmt.Printf("ptr指向的变量值为：%v，空间地址：%v\n", *ptr, &ptr)
+}
 
+```
 
+### 指针赋值与取值
 
+```go
+package main
 
+import "fmt"
 
+func main() {
+	//var a int = 200
+	//fmt.Printf("变量a的空间地址：%v\n", &a)
+	//// 定义int类型的指针变量
+	//var pint *int
+	//fmt.Printf("指针值为：%v，空间地址：%v\n", pint, &pint)
+	//pint = &a
+	//fmt.Printf("指针值为：%v，空间地址：%v\n", pint, &pint)
+	//fmt.Printf("指针值的值为：%v，空间地址：%v\n", *pint, &pint)
 
+	var b int = 100
+	var pint *int
+	fmt.Printf("指针值的值为：%v，空间地址：%v\n", pint, &pint)
+	// 将变量b的内存地址赋值给指针pint
+	pint = &b
+	fmt.Printf("指针值的值为：%v，空间地址：%v\n", *pint, &pint)
+	// 通过取值操作符“*”修改变量b的值
+	*pint = 666
+	fmt.Printf("指针值的值为：%v，空间地址：%v\n", *pint, &pint)
+}
+```
 
+### 切片指针
 
 
 

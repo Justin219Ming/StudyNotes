@@ -315,7 +315,51 @@ Conventional Commits
 把内容提交到远程仓库上
 
 
+
+### 遇到refusing to merge unrelated histories的错误
+
+如果git merge合并的时候出现refusing to merge unrelated histories的错误，原因是两个仓库不同而导致的，需要在后面加上--allow-unrelated-histories进行允许合并，即可解决问题
+
+如果还不能解决问题，就把本地的remote删除，重新git remote add添加远程仓库，再按上面的方法来，问题解决。
+
+pull
+git pull 命令基本上就是 git fetch 和 git merge 命令的组合体，Git 从指定的远程仓库中抓取内容，然后马上尝试将其合并进你所在的分支中。
+
+```bash
+解决：
+ 
+$git pull origin master --allow-unrelated-histories
+ 
+以上是将远程仓库的文件拉取到本地仓库了。 
+紧接着将本地仓库的提交推送到远程github仓库上，使用的命令是：
+ 
+$ git push <远程主机名> <本地分支名>:<远程分支名>
+也就是
+$git push origin master:master
+提交成功。
+```
+
+### 移动文件 重命名文件 移动文件夹
+
+git mv命令其实就是 mv 命令与git add命令的集合。例如将system目录下的login.py移动到user目录下：
+
+```bash
+git mv system/login.py user/login.py
+```
+
+这与下面的命令效果一致：
+
+```bash
+mv system/login.py user/login.py
+
+git add user/login.py
+```
+
+
+
 ## 坑
+
+
 
 在推送 关联到远程仓库的时候 千万记住 那个仓库一定要是干净的 不能有什么readme文件
 
