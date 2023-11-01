@@ -523,7 +523,7 @@ func main() {
 
 >  // 或者   /*    */
 
-## 数据类型
+## 第三章 数据类型
 
 ### 浮点型
 
@@ -962,7 +962,7 @@ func main() {
 
  具体细节需要用的时候自行查询 大部分转换方法都在内置包strconv中有定义
 
-## 流程控制
+## 第四章 流程控制
 
 ### if
 
@@ -1192,7 +1192,7 @@ func main() {
 
 
 
-## 指针
+## 第五章 指针
 
   GO中的指针有两种类型
 
@@ -1267,23 +1267,332 @@ func main() {
 
 ### 切片指针
 
+定义方式
+
+>  var name []*type
+>
+>  name := []*type{}
+
+ ```go
+ package main
+ 
+ import "fmt"
+ 
+ func main() {
+ 	// 定义一个空的字符串类型的切片指针
+ 	var pslice []*string
+ 	fmt.Printf("切片指针的元素：%v，内存地址：%v\n", pslice, &pslice)
+ 	// 定义变量a、b、c并赋值
+ 	var a, b string
+ 	a, b = "a", "b"
+ 	fmt.Printf("变量a、b的内存地址：%v、%v\n", &a, &b)
+ 	// 使用内置函数append()将变量a、b、c的内存地址添加到切片指针
+ 	pslice = append(pslice, &a)
+ 	pslice = append(pslice, &b)
+ 	fmt.Printf("切片指针的元素：%v\n", pslice)
+ 	// 输出切片指针的元素所对应的数值
+ 	// 使用取值操作符“*”从内存地址取值
+ 	for _, k := range pslice {
+ 		fmt.Printf("切片指针的元素所对应值：%v\n", *k)
+ 	}
+ 	// 从切片指针修改变量a的值，输出变量a
+ 	*pslice[0] = "hello"
+ 	fmt.Printf("修改后的变量值为：%v\n", a)
+ 	// 修改变量b的值，输出切片指针的变量b的值
+ 	b = "Golang"
+ 	fmt.Printf("修改后的变量值为：%v\n", *pslice[1])
+ 
+ }
+ 
+ ```
+
+- 切片指针定义之后 如果没有设置初始值，默认为空，并且不会有分配内存地址，因此无法通过&来取得地址
+
+### 指针的指针
+
+> var name **type
+
+获取值
+
+> v := **name  
+
+### 小结 综合应用
+
+```go
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+func main() {
+	// 购买号码
+	// 定义变量myNum，存放用户当前输入数据
+	var myNum int
+	// 定义变量myNums，存放用户所有输入数据
+	var myNums []int
+	// 循环7次，给用户输入7个数据
+	for i := 0; i < 7; i++ {
+		// 输出操作提示
+		fmt.Printf("请输入第%v位号码：\n", i+1)
+		// 存储用户输入数据
+		fmt.Scanln(&myNum)
+		// 将当前数据存放在切片myNums
+		myNums = append(myNums, myNum)
+	}
+	fmt.Printf("你选到号码分别为：%v\n", myNums)
+
+	// 公布开奖号码
+	// 定义变量s，切片类型，切片元素为指针类型
+	var result []*int
+	// 定义变量status，数据类型为布尔型
+	var status bool
+	// 设置随机数的随机种子
+	rand.Seed(time.Now().UnixNano())
+	// 设置死循环
+	for {
+		// 定义变量num，数据类型为整型
+		var num int
+		// 设置变量status的值
+		status = false
+		// 创建随机数
+		num = rand.Intn(36) + 1
+		// 遍历切片result的每个元素
+		// 如果随机数num已存在切片result，将变量status等于true
+		for _, k := range result {
+			if *k == num {
+				status = true
+			}
+		}
+		// 变量status等于false
+		// 说明随机数num不在切片result里面，将随机数num加入切片result
+		if status == false {
+			result = append(result, &num)
+		}
+		// 切片长度等于7，终止死循环
+		if len(result) == 7 {
+			break
+		}
+	}
+	// 遍历输出切片所有元素
+	for i, k := range result {
+		fmt.Printf("第%v位号码为：%v\n", i+1, *k)
+	}
+
+	// 兑奖
+	// 遍历切片result和myNums，将两个切片元素一一对比
+	for _, k := range result {
+		for _, j := range myNums {
+			if *k == j {
+				fmt.Printf("号码%v选中了\n", j)
+			}
+		}
+	}
+}
+
+```
+
+## 第六章 内置容器
 
 
 
+### 数组
+
+> var name [number]type
+
+- number 可以是表达式 但是最终结果必须是整数
+
+- 默认数组里面装填为0
+- String类型里面为空字符串
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	// 定义长度为2的数组并设置每个元素值
+	var s = [2]int{100, 200}
+	// 输出数组元素
+	for i := 0; i < len(s); i++ {
+		fmt.Printf("数组s第%v个元素是：%v\n", i+1, s[i])
+	}
+
+	// 定义数组并设置每个元素值，数值长度根据元素个数自动设置
+	var ss = [...]int{300, 400}
+	// 输出数组元素
+	for i := 0; i < len(ss); i++ {
+		fmt.Printf("数组ss第%v个元素是：%v\n", i+1, ss[i])
+	}
+
+	// 定义数组并设置第一个和第四个元素值
+	var sss = [...]int{0: 300, 3: 500}
+	// 输出数组元素
+	for i := 0; i < len(sss); i++ {
+		fmt.Printf("数组sss第%v个元素是：%v\n", i+1, sss[i])
+	}
+}
+
+```
+
+ ```go
+ package main
+ 
+ import (
+ 	"fmt"
+ 	"math"
+ )
+ 
+ func main() {
+ 	var result int = 0
+ 	// 定义3行2列长度的二维数组
+ 	var s [3][2]int
+ 	// 为二维数组赋值
+ 	s = [3][2]int{{10, 20}, {30, 40}, {50, 60}}
+ 	for i := 0; i < len(s); i++ {
+ 		// 循环每一行数据
+ 		for k := 0; k < len(s[i]); k++ {
+ 			// 循环每一列数据
+ 			result = result + s[i][k]
+ 			fmt.Printf("当前元素值为：%v\n", s[i][k])
+ 		}
+ 	}
+ 	fmt.Printf("二维数组的总行数为：%v\n", len(s))
+ 	fmt.Printf("二维数组的总列数为：%v\n", len(s[0]))
+ 	fmt.Printf("二维数组的总值为：%v\n", result)
+ 
+ 	// 定义2*1*3长度的三维数组
+ 	var point [2][1][3]int
+ 	point = [2][1][3]int{{{3, 5, 7}}, {{5, 3, 2}}}
+ 	// 获取坐标点
+ 	pointA := point[0][0]
+ 	pointB := point[1][0]
+ 	fmt.Printf("坐标点A：%v\n", pointA)
+ 	fmt.Printf("坐标点B：%v\n", pointB)
+ 	// 计算两个坐标点距离
+ 	// 计算两坐标的x坐标之差的平方
+ 	x := (pointA[0] - pointB[0]) * (pointA[0] - pointB[0])
+ 	// 计算两坐标的y坐标之差的平方
+ 	y := (pointA[1] - pointB[1]) * (pointA[1] - pointB[1])
+ 	// 计算两坐标的z坐标之差的平方
+ 	z := (pointA[2] - pointB[2]) * (pointA[2] - pointB[2])
+ 	result := math.Sqrt(float64(x + y + z))
+ 	fmt.Printf("两坐标点距离为：%v\n", result)
+ }
+ 
+ ```
+
+### 切片
+
+- 可以理解为动态数组
+
+> 定义 ： var name []type
+>
+> 定义并赋值 ： var name = []{value1, value2}
+>
+> 使用make :  var name []type = make ([type, len])
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var s []int
+	var ss = []int{1, 2}
+	var sss []int = make([]int, 3)
+	fmt.Printf("只定义：%v，内存地址为：%v\n", s, &s)
+	fmt.Printf("定义并赋值：%v，内存地址为：%v\n", ss, &ss)
+	fmt.Printf("使用make()函数定义：%v，内存地址为：%v\n", sss, &sss)
+	
+	//var ss = []int{1, 2}
+	//fmt.Printf("切片变量ss的元素值为：%v\n", ss)
+	
+	
+}
+```
+
+### 新增切片元素
+
+> ss := append(slice , elems)
+
+- slice是代表待新增的元素切片
+- elems代表新增元素的元素值 可以是切片 这样就等同于切片连接
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var ss = []int{1, 2}
+	fmt.Printf("新增元素前的切片ss：%v\n", ss)
+	// 新增元素不覆盖原有切片
+	sss := append(ss, 3)
+	fmt.Printf("新增元素后的切片ss：%v\n", ss)
+	fmt.Printf("新切片sss：%v\n", sss)
+	// 新增元素并覆盖原有切片
+	ss = append(ss, 4)
+	fmt.Printf("新增元素后的切片ss：%v\n", ss)
+	// 添加多个元素
+	ss = append(ss, 5, 6, 7, 8)
+	fmt.Printf("新增元素后的切片ss：%v\n", ss)
+}
+
+```
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var ss = []int{1, 2, 3, 4, 5, 6, 7}
+	// 截取第二个到第五个元素
+	s1 := ss[1:4]
+	fmt.Printf("截取第二个到第五个元素：%v\n", s1)
+	// 截取第三个元素之后的所有元素
+	s2 := ss[2:]
+	fmt.Printf("截取第三个元素之后的所有元素：%v\n", s2)
+	// 截取第三个元素之前的所有元素
+	s3 := ss[:2]
+	fmt.Printf("截取第三个元素之前的所有元素：%v\n", s3)
+	// 如果切片ss没被覆盖，经过截取后不改变原有的切片数据
+	fmt.Printf("切片变量ss的值：%v\n", ss)
 
 
+	//var ss = []int{1, 2, 3, 4, 5, 6, 7}
+	//fmt.Printf("切片ss的元素：%v\n", ss)
+	//// 删除元素4、5、6
+	//ss = append(ss[:2], ss[6:]...)
+	//fmt.Printf("切片ss的元素：%v\n", ss)
 
+}
 
+```
 
+ ### 复制切片
 
+> i := copy(slice1 , slice2)
 
+- slice1代表待复制的切片
+- slice2代表被复制的切片
 
+```go
+slice1 := []int{1, 2, 3, 8}
+	slice2 := []int{4, 5, 6}
+	// 将slice1的元素复制到slice2
+	//copy(slice2, slice1)
+	// 将slice2的元素复制到slice1
+	copy(slice1, slice2)
+	fmt.Printf("将slice2的元素复制到slice1：%v\n", slice1)
+```
 
+- 如果元素个数不同， 以参数slice1的个数为主。
 
-
-
-
-
+### 切片的长度与容量
 
 
 
