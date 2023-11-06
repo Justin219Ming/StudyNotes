@@ -207,7 +207,11 @@ $ git remote rm origin
 
 来进行克隆操作
 
+> git clone -b 分支名 远程库名
+
 Git支持多种协议，https，ssh等 但是ssh快
+
+
 
 ## 分支管理
 

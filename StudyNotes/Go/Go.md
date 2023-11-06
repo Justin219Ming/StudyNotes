@@ -1594,17 +1594,456 @@ slice1 := []int{1, 2, 3, 8}
 
 ### 切片的长度与容量
 
+当切片容量不足时，go会自动将容量翻倍
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	// 内置函数cap()获取切片容量
+	// 内置函数len()获取切片长度
+	s1 := make([]int, 3, 4)
+	fmt.Printf("切片变量s1的值：%v\n", s1)
+	fmt.Printf("切片变量s1的长度：%v\n", len(s1))
+	fmt.Printf("切片变量s1的容量：%v\n", cap(s1))
+	// 第一次添加元素
+	s1 = append(s1, 10)
+	fmt.Printf("切片变量s1的值：%v\n", s1)
+	fmt.Printf("切片变量s1的长度：%v\n", len(s1))
+	fmt.Printf("切片变量s1的容量：%v\n", cap(s1))
+	// 第二次添加元素
+	s1 = append(s1, 10)
+	fmt.Printf("切片变量s1的值：%v\n", s1)
+	fmt.Printf("切片变量s1的长度：%v\n", len(s1))
+	fmt.Printf("切片变量s1的容量：%v\n", cap(s1))
+}
+
+```
+
+### 集合
+
+又称为映射（map）是一种无序的键值对（key-value）
+
+在其他语言中成为字典（python)
+
+一个集合中的键值对是一样的数据类型
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	// 只定义
+	var m1 = map[string]string{}
+	m1["name"] = "Tom"
+	fmt.Printf("集合m1：%v\n", m1)
+	// 定义并赋值
+	var m2 = map[string]string{"name": "Lily"}
+	fmt.Printf("集合m2：%v\n", m2)
+	// 使用make()函数定义
+	m3 := make(map[string]string)
+	m3["name"] = "Tim"
+	fmt.Printf("集合m3：%v\n", m3)
+}
+
+```
+
+### 删除集合元素
+
+使用`m[key]=value`的方式来新增或者修改
+
+如果集合中没有这个key 那就新增
+
+如果集合中有这key 那就修改
+
+删除使用delete的方式实现
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var m1 = map[string]string{}
+	m1["name"] = "Tom"
+	m1["age"] = "20"
+	m1["addr"] = "GZ"
+	fmt.Printf("集合m1的数据：%v\n", m1)
+	// 删除key=addr的数据
+	delete(m1, "addr")
+	fmt.Printf("集合m1的数据：%v\n", m1)
+}
+
+```
+
+### 集合和JSON的互换
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+func main() {
+	// 定义字符串，用于记录JSON数据
+	var j string
+	j = `{"infos": [{"name": "Tom", "age": 15}, {"name": "Lily", "age": 20}]}`
+	// 定义集合，value的数据类型为接口interface类型
+	var m1 = map[string]interface{}{}
+	// 将JSON字符串转换为集合
+	json.Unmarshal([]byte(j), &m1)
+	// 遍历输出JSON
+	for k, v := range m1 {
+		fmt.Printf("集合m1的键为：%v\n", k)
+		fmt.Printf("集合m1的值为：%v\n", v)
+		// 解析JSON里面的数组
+		vv := v.([]interface{})
+		for i := 0; i < len(vv); i++ {
+			fmt.Printf("数组vv的值为：%v\n", vv[i])
+			// 解析数组里面的集合
+			vvv := vv[i].(map[string]interface{})
+			name := vvv["name"]
+			age := vvv["age"]
+			fmt.Printf("键为name的数据为：%v\n", name)
+			fmt.Printf("键为age的数据为：%v\n", age)
+		}
+	}
+}
+
+```
+
+
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+func main() {
+	// 定义集合
+	var m1 = map[string]interface{}{}
+	m1["name"] = "Tom"
+	m1["age"] = 10
+	fmt.Printf("m1的数据为：%v\n", m1)
+	var m2 = map[string]interface{}{}
+	m2["name"] = "Lily"
+	m2["age"] = 20
+	fmt.Printf("m2的数据为：%v\n", m2)
+	// 定义切片
+	var s1 = []map[string]interface{}{m1, m2}
+	fmt.Printf("s1的数据为：%v\n", s1)
+	// 定义集合，键为字符串类型，值为接口类型
+	var m3 = map[string]interface{}{}
+	m3["infos"] = s1
+	data, _ := json.Marshal(&m3)
+	fmt.Printf("JSON数据为：%v\n", string(data))
+}
+
+```
+
+### 列表
+
+`container/list`包
+
+> var name list.List
+>
+> name := list.New()
+>
+> 
+
+**是一种链表类型 但是具体的实现方式比较难理解 **
+
+P112
 
 
 
 
 
+## 函数
+
+  基本格式
+
+> func name (参数) (返回值) {
+>
+> ​	代码块
+>
+> ​	return 返回值
+>
+> }
+
+```go
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func myfun(name string, age int) (string, bool) {
+	// 参数name和age
+	// (string, bool)是返回值的数据类型
+	var n string
+	var b bool
+	if name != "" {
+		// 字符串拼接
+		n = name + " is existence, age is " + strconv.Itoa(age)
+		b = true
+	} else {
+		n = "name is not existence"
+		b = false
+	}
+	// 返回值
+	return n, b
+}
+
+func main() {
+	// 调用函数，并设置返回值
+	s, _ := myfun("Tom", 15)
+	fmt.Println(s)
+	// 调用函数，虽然有返回值，但函数外不需要使用
+	myfun("Tom", 15)
+}
+
+```
+
+### 不固定参数数量
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+//func myfun(numbers ...int) {
+//	for _, k := range numbers {
+//		fmt.Printf("参数值为：%v\n", k)
+//	}
+//}
+func myfun(numbers ...interface{}) {
+	for _, k := range numbers {
+		fmt.Printf("参数值为：%v\n", k)
+	}
+}
+
+
+func main() {
+	var s = []string{"Mary", "Tim"}
+	var m = map[string]interface{}{"name": "Mary", "age": 10}
+	// 调用函数
+	myfun(45, "Tom", s, m)
+}
+
+```
+
+### 匿名函数
+
+```go
+package main
+import (
+	"fmt"
+)
+func main(){
+
+	//res := func(n1 int, n2 int) int {
+	//	return n1 + n2
+	//}(10, 30)
+	//
+	//fmt.Printf("函数执行结果为：%v\n", res)
+	//
+
+
+	// 将匿名函数赋给函数变量myfun
+	myfun := func (n1 int, n2 int) int {
+		return n1 - n2
+	}
+
+	// 变量myfun的数据类型是函数类型，可以由该变量完成函数调用
+	res2 := myfun(10, 30)
+	res3 := myfun(50, 30)
+	fmt.Printf("匿名函数调用第一次：%v\n", res2)
+	fmt.Printf("匿名函数调用第二次：%v\n", res3)
+	fmt.Printf("函数变量myfun的数据类型：%T\n", myfun)
+}
+```
+
+ ### 闭包函数
+
+不理解
+
+```go
+package main
+
+import "fmt"
+
+// 闭包 = 函数 + 引用环境
+func adder() func(int) int {
+	// 定义函数adder()，返回值为匿名函数func(int) int
+	var x int = 10
+	// 匿名函数作为函数返回值
+	return func(y int) int {
+		x += y
+		return x
+	}
+}
+
+func main() {
+	// 函数adder()是一个闭包:
+	// 函数adder()内部有变量x（引用环境）和匿名函数
+	// 匿名函数引用了其外部作用域中的变量x
+	// 在函数adder()的生命周期内 变量x一直有效
+	f := adder()
+	fmt.Println(f(10))
+	fmt.Println(f(20))
+	f1 := adder()
+	fmt.Println(f1(2000))
+	fmt.Println(f1(5000))
+}
+
+```
 
 
 
+### 函数的自身调用
 
 
 
+```go
+package main
+
+import "fmt"
+
+func fibonacci(n int) int {
+	// 定义递归函数
+	if n < 2 {
+		return n
+	}
+	// 调用自身，传入不同参数值
+	return fibonacci(n-2) + fibonacci(n-1)
+}
+
+func main() {
+	var i int
+	// 调用函数fibonacci()
+	for i = 0; i < 10; i++ {
+		fmt.Printf("%d ", fibonacci(i))
+	}
+}
+
+```
+
+
+
+## 结构体
+
+```go
+package main
+
+import "fmt"
+
+// 定义结构体person
+type person struct {
+	name string
+	age  int
+}
+
+func main() {
+	// 实例化方法1
+	// 实例化结构体person，生成实例化对象p
+	p := person{name: "Tom", age: 18}
+	// 由实例化对象p访问成员
+	fmt.Printf("结构体成员name的值：%v\n", p.name)
+	fmt.Printf("结构体成员age的值：%v\n", p.age)
+
+	// 实例化方法2
+	// 实例化结构体
+	var p1 person
+	// 对结构体成员进行赋值操作
+	p1.name = "Tim"
+	p1.age = 22
+	// 由实例化对象p1访问成员
+	fmt.Printf("结构体成员name的值：%v\n", p1.name)
+	fmt.Printf("结构体成员age的值：%v\n", p1.age)
+
+	// 实例化方法3
+	// 使用new()实例化结构体
+	p3 := new(person)
+	// 对结构体成员进行赋值操作
+	p3.name = "LiLy"
+	p3.age = 28
+	// 由实例化对象p3访问成员
+	fmt.Printf("结构体成员name的值：%v\n", p3.name)
+	fmt.Printf("结构体成员age的值：%v\n", p3.age)
+
+	// 实例化方法4
+	// 取结构体的地址实例化
+	p4 := &person{}
+	// 对结构体成员进行赋值操作
+	p4.name = "Mary"
+	p4.age = 16
+	// 由实例化对象p4访问成员
+	fmt.Printf("结构体成员name的值：%v\n", p4.name)
+	fmt.Printf("结构体成员age的值：%v\n", p4.age)
+}
+
+```
+
+### 使用指针方式的实例化
+
+```go
+package main
+
+import "fmt"
+
+// 定义结构体person
+type person struct {
+	name string
+	age  int
+}
+
+func main() {
+	// 实例化方法3
+	// 使用new()实例化结构体
+	var p3 *person = new(person)
+	// 对结构体成员进行赋值操作
+	(*p3).name = "LiLy"
+	(*p3).age = 28
+	// 由实例化对象p3访问成员
+	fmt.Printf("结构体成员name的值：%v\n", p3.name)
+	fmt.Printf("结构体成员age的值：%v\n", p3.age)
+
+	// 实例化方法4
+	// 取结构体的地址实例化
+	var p4 *person = &person{}
+	// 对结构体成员进行赋值操作
+	(*p4).name = "Mary"
+	(*p4).age = 16
+	// 由实例化对象p4访问成员
+	fmt.Printf("结构体成员name的值：%v\n", p4.name)
+	fmt.Printf("结构体成员age的值：%v\n", p4.age)
+}
+
+```
+
+使用指针访问的时候可以直接使用实心点访问
+
+会自动转换成为对应的操作
+
+> (*p3).name = 'LiLy'
+>
+> p3.name = xxx
+
+### 结构体标签
 
 
 
